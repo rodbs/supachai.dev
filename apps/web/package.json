@@ -1,6 +1,8 @@
 {
   "name": "web",
   "private": true,
+  "main": "./build/index.js",
+  "types": "./build.d.ts",
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
