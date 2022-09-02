@@ -1,4 +1,4 @@
-import type { MetaFunction } from '@remix-run/cloudflare'
+import type { LinksFunction, MetaFunction } from '@remix-run/cloudflare'
 import {
   Links,
   LiveReload,
@@ -7,6 +7,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from '@remix-run/react'
+import tailwindCssHref from '~/styles/tailwind.css'
+
+export const links: LinksFunction = () => {
+  return [{ rel: 'stylesheet', href: tailwindCssHref }]
+}
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
