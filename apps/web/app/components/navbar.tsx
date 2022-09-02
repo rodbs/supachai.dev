@@ -33,11 +33,11 @@ function NavBar() {
         key={urlSearchParams.get('nav')}
         defaultOpen={urlSearchParams.get('nav') === 'true'}
         as="nav"
-        className="bg-zinc-50/95 backdrop-blur-sm dark:bg-zinc-900/95 sm:py-4"
+        className="bg-zinc-50/95 backdrop-blur-sm dark:bg-zinc-900/95"
       >
         {({ open }) => (
           <>
-            <div className="flex h-16 justify-between">
+            <div className="flex justify-between">
               <div className="flex items-center sm:w-full sm:justify-between">
                 <Link
                   to="/"
@@ -107,8 +107,8 @@ function NavBar() {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Disclosure.Panel className="sm:hidden">
-                <div className="space-y-1 pt-2 pb-3">
+              <Disclosure.Panel className="mt-4 sm:hidden">
+                <div className="space-y-1">
                   {navigation.map(({ href, name }) => (
                     <Disclosure.Button key={href} as="div">
                       <NavLink
