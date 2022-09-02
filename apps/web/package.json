@@ -6,7 +6,8 @@
   "sideEffects": false,
   "scripts": {
     "build": "remix build",
-    "dev": "remix watch"
+    "dev": "remix watch",
+    "format": "prettier --write '**/*.{ts,tsx,js,jsx}'"
   },
   "dependencies": {
     "@remix-run/cloudflare": "^1.7.0",

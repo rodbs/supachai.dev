@@ -5,7 +5,8 @@
     "dev": "cross-env NODE_ENV=development wrangler dev --local --experimental-enable-local-persistence --ip 0.0.0.0 --live-reload",
     "start": "cross-env NODE_ENV=production wrangler dev",
     "deploy": "cross-env NODE_ENV=production wrangler publish",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write '**/*.{ts,js}'"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.16.0",
