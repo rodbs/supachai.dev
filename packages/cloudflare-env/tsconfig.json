@@ -1,0 +1,11 @@
+{
+  "extends": "tsconfig/base.json",
+  "compilerOptions": {
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "incremental": true,
+    "types": ["@cloudflare/workers-types"]
+  },
+  "$schema": "https://json.schemastore.org/tsconfig"
+}
