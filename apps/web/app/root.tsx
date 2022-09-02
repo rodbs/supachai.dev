@@ -1,7 +1,6 @@
 import type { LinksFunction, MetaFunction } from '@remix-run/cloudflare'
 import {
   Links,
-  LiveReload,
   Meta,
   Outlet,
   Scripts,
@@ -26,11 +25,11 @@ export default function App() {
         <Meta />
         <Links />
       </head>
-      <body className="bg-zinc-50 dark:bg-zinc-900">
+      <body className="bg-zinc-50 text-zinc-900 dark:bg-zinc-900 dark:text-zinc-400">
         <Outlet />
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
+        {/* <LiveReload /> */}
       </body>
     </html>
   )
