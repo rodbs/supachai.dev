@@ -1,3 +1,11 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
+@layer base {
+  .nav-link,
+  .hamburger-menu-link {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    -webkit-tab-highlight-color: transparent;
+  }
+}

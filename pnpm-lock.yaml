@@ -17,6 +17,8 @@ importers:
   apps/web:
     specifiers:
       '@cloudflare/workers-types': ^3.16.0
+      '@headlessui/react': ^1.6.6
+      '@heroicons/react': ^2.0.10
       '@remix-run/cloudflare': ^1.7.0
       '@remix-run/dev': ^1.7.0
       '@remix-run/eslint-config': ^1.7.0
@@ -31,6 +33,8 @@ importers:
       tailwindcss: ^3.1.8
       typescript: ^4.7.4
     dependencies:
+      '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
+      '@heroicons/react': 2.0.10_react@18.2.0
       '@remix-run/cloudflare': 1.7.0_rmlhqq3wqa7qw2ydvcfy7r72ym
       '@remix-run/react': 1.7.0_biqbaboplfbrettd7655fr4n2y
       react: 18.2.0
@@ -1498,6 +1502,25 @@ packages:
   /@gar/promisify/1.1.3:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
     dev: true
+
+  /@headlessui/react/1.6.6_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-MFJtmj9Xh/hhBMhLccGbBoSk+sk61BlP6sJe4uQcVMtXZhCgGqd2GyIQzzmsdPdTEWGSF434CBi8mnhR6um46Q==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
+    dev: false
+
+  /@heroicons/react/2.0.10_react@18.2.0:
+    resolution: {integrity: sha512-Ufr+pgAElNiRCSklnHGOR10bXb02BLlosvbDK7sCRUMOcQ3R/HCXTfXs4BUkYZ4dKpx6l5dUD06VSW1dTpTEDw==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /@humanwhocodes/config-array/0.10.4:
     resolution: {integrity: sha512-mXAIHxZT3Vcpg83opl1wGlVZ9xydbfZO3r5YfRSH6Gpp2J/PfdBP0wbDa2sO6/qRbcalpoevVyW6A/fI6LfeMw==}
