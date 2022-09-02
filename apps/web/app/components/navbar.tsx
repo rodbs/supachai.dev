@@ -33,7 +33,7 @@ function NavBar() {
         key={urlSearchParams.get('nav')}
         defaultOpen={urlSearchParams.get('nav') === 'true'}
         as="nav"
-        className="bg-white/95 backdrop-blur-sm dark:bg-zinc-900/95 sm:py-4"
+        className="bg-zinc-50/95 backdrop-blur-sm dark:bg-zinc-900/95 sm:py-4"
       >
         {({ open }) => (
           <>
@@ -117,7 +117,7 @@ function NavBar() {
                         className={({ isActive }) =>
                           classNames(
                             isActive
-                              ? 'rounded border-zinc-500 bg-zinc-50 font-bold text-zinc-900 dark:bg-zinc-800/50 dark:text-zinc-300'
+                              ? 'rounded border-zinc-500 bg-zinc-100 font-bold text-zinc-900 dark:bg-zinc-800/50 dark:text-zinc-300'
                               : 'border-transparent font-medium text-zinc-500 hover:border-zinc-300 hover:bg-zinc-50/50 hover:text-zinc-700 dark:hover:bg-zinc-900/30 dark:hover:text-zinc-300',
                             'nav-link block py-2 pl-3 pr-4 text-sm uppercase',
                           )
