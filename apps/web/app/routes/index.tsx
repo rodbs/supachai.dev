@@ -13,8 +13,9 @@ import {
   useLoaderData,
   useLocation,
   useSearchParams,
+  useTransition,
 } from '@remix-run/react'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
 import type { AtomicNote } from '~/atomic-notes'
 import { getAtomicNoteService } from '~/atomic-notes'
@@ -143,7 +144,8 @@ export async function loader({ context, request }: LoaderArgs) {
       return true
     })
     .filter(atomicNote => {
-      const search = url.searchParams.get('atomicNoteSearchQuery')
+      const allSearchTerms = url.searchParams.getAll('atomicNoteSearchQuery')
+      const search = allSearchTerms[allSearchTerms.length - 1]
       if (!search) return true
       return atomicNote.body.toLowerCase().includes(search.toLowerCase())
     })
@@ -166,7 +168,7 @@ export async function loader({ context, request }: LoaderArgs) {
     scrollToAtomicNotes: Boolean(
       url.searchParams.get('_action') === ATOMIC_NOTE_ACTIONS.SEARCH,
     ),
-    searchQuery: url.searchParams.get('atomicNoteSearchQuery') || '',
+    atomicNoteSearchQuery: url.searchParams.get('atomicNoteSearchQuery') || '',
   }
 
   return json(data)
@@ -218,13 +220,19 @@ const techStack: Array<TechStack> = [
 
 export default function Index() {
   const {
-    atomicNotes,
-    hasMoreAtomicNotes,
+    atomicNotes: _atomicNotes,
+    hasMoreAtomicNotes: _hasMoreAtomicNotes,
     isAuthenticated,
     isAdmin,
     scrollToAtomicNotes,
-    searchQuery,
+    atomicNoteSearchQuery: _atomicNoteSearchQuery,
   } = useLoaderData<typeof loader>()
+  const [atomicNotes, setAtomicNotes] = useState(_atomicNotes)
+  const [atomicNoteSearchQuery, setAtomicNoteSearchQuery] = useState(
+    _atomicNoteSearchQuery,
+  )
+  const [hasMoreAtomicNotes, setHasMoreAtomicNotes] =
+    useState(_hasMoreAtomicNotes)
   const atomicNoteFetcher = useFetcher()
   const isCreatingAtomicNote =
     atomicNoteFetcher.state === 'submitting' &&
@@ -236,6 +244,11 @@ export default function Index() {
   const mounted = useRef(false)
   const createNoteFormRef = useRef<HTMLFormElement>(null)
   const searchFormRef = useRef<HTMLFormElement>(null)
+  const isSearchingAtomicNotes =
+    atomicNoteFetcher.state === 'submitting' &&
+    atomicNoteFetcher.submission.formData.get('_action') ===
+      ATOMIC_NOTE_ACTIONS.SEARCH
+  const transition = useTransition()
 
   useEffect(() => {
     if (!mounted.current) {
@@ -244,15 +257,38 @@ export default function Index() {
     }
 
     if (isCreatingAtomicNote) return
+    if (isSearchingAtomicNotes) return
 
     createNoteFormRef.current?.reset()
-  }, [isCreatingAtomicNote])
+    setAtomicNoteSearchQuery(atomicNoteFetcher.data?.atomicNoteSearchQuery)
+    setAtomicNotes(atomicNoteFetcher.data?.atomicNotes)
+    setHasMoreAtomicNotes(atomicNoteFetcher.data?.hasMoreAtomicNotes)
+  }, [
+    atomicNoteFetcher.data?.atomicNoteSearchQuery,
+    atomicNoteFetcher.data?.atomicNotes,
+    atomicNoteFetcher.data?.hasMoreAtomicNotes,
+    isCreatingAtomicNote,
+    isSearchingAtomicNotes,
+  ])
 
   useEffect(() => {
     if (scrollToAtomicNotes)
       document.querySelector('#atomic-note-list')?.scrollIntoView() ||
         document.querySelector('#no-atomic-notes-prompt')?.scrollIntoView()
   }, [scrollToAtomicNotes])
+
+  useEffect(() => {
+    if (transition.state === 'submitting') return
+    setAtomicNotes(_atomicNotes)
+    setAtomicNoteSearchQuery(_atomicNoteSearchQuery)
+    setHasMoreAtomicNotes(_hasMoreAtomicNotes)
+    searchFormRef.current?.reset()
+  }, [
+    transition.state,
+    _atomicNotes,
+    _atomicNoteSearchQuery,
+    _hasMoreAtomicNotes,
+  ])
 
   return (
     <>
@@ -319,7 +355,6 @@ export default function Index() {
               method="get"
               ref={searchFormRef}
               className="mt-3"
-              reloadDocument
             >
               <input
                 type="hidden"
@@ -336,13 +371,19 @@ export default function Index() {
                     className="h-5 w-5 text-zinc-400"
                   />
                   <input
-                    type="text"
+                    type="search"
+                    autoComplete="off"
                     name="atomicNoteSearchQuery"
                     id="atomic-note-search-query"
                     placeholder="Search"
                     className="ml-2 w-full bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:placeholder:text-zinc-600"
-                    defaultValue={searchQuery}
+                    defaultValue={atomicNoteSearchQuery}
                   />
+                </div>
+                <div className="ml-2 flex">
+                  <button className="inline-flex items-center rounded border border-zinc-200 px-3 py-1 font-sans text-sm font-medium text-zinc-400">
+                    Search
+                  </button>
                 </div>
               </div>
             </atomicNoteFetcher.Form>
@@ -500,6 +541,7 @@ export default function Index() {
                         'atomicNoteOffset',
                         (+atomicNoteOffset + LOAD_MORE_COUNT).toString(),
                       ],
+                      ['atomicNoteSearchQuery', atomicNoteSearchQuery],
                       ...urlSearchParams.entries(),
                     ])}#${atomicNotes[atomicNotes.length - 1].id}`}
                     className="mt-4 flex w-fit underline"
