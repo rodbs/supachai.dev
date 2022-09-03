@@ -52,7 +52,7 @@ export default function Index() {
         <header>
           <NavBar />
         </header>
-        <main className="mt-16 sm:mt-20">
+        <main className="mt-24">
           <section className="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
             <h1 className="text-2xl font-bold">Fullstack Web Developer</h1>
             <p className="mt-4">
@@ -60,7 +60,7 @@ export default function Index() {
               enhancement philosophy—this website works well without JavaScript.
             </p>
           </section>
-          <section className="mt-10">
+          <section className="mt-8">
             <h2 className="text-xl font-bold">Tech Stack</h2>
             <ul className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
               {techStack.map(({ name, iconSrc, href }) => (

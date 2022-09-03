@@ -33,7 +33,7 @@ function NavBar() {
       key={urlSearchParams.get('nav')}
       defaultOpen={urlSearchParams.get('nav') === 'true'}
       as="nav"
-      className="fixed inset-x-0 top-0 z-50 bg-zinc-50/95 py-2 backdrop-blur-sm dark:bg-zinc-900/95 sm:py-4"
+      className="fixed inset-x-0 top-0 z-50 bg-zinc-50/95 py-2 shadow-sm shadow-zinc-100 backdrop-blur-sm dark:bg-zinc-900/95 dark:shadow-zinc-800 sm:py-4"
     >
       {({ open }) => (
         <Container>
