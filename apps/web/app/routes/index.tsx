@@ -62,6 +62,22 @@ export default function Index() {
             </p>
           </section>
           <section className="mt-8">
+            <a
+              href="https://github.com/supachaidev"
+              target="_blank"
+              rel="noreferrer"
+              title="My GitHub profile"
+              className="inline-flex items-center rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-zinc-700 shadow-sm hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:bg-transparent dark:focus:ring-offset-0"
+            >
+              <img
+                className="mr-2 h-5 w-5"
+                src="/assets/static/icons/github.svg"
+                alt="GitHub Icon"
+              />
+              My GitHub Profile
+            </a>
+          </section>
+          <section className="mt-8">
             <h2 className="text-xl font-bold">Tech Stack</h2>
             <ul className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
               {techStack.map(({ name, iconSrc, href }) => (
