@@ -53,7 +53,7 @@ export default function Index() {
           <NavBar />
         </header>
         <main className="mt-10">
-          <section>
+          <section className="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
             <h1 className="text-2xl font-bold">Fullstack Web Developer</h1>
             <p className="mt-4">
               I build web applications with great UX using progressive
