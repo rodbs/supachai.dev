@@ -12,6 +12,7 @@
     "format": "prettier --write '**/*.{ts,tsx,js,jsx}'"
   },
   "dependencies": {
+    "@formkit/auto-animate": "1.0.0-beta.3",
     "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^2.0.10",
     "@remix-run/cloudflare": "^1.7.0",

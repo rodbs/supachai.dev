@@ -17,6 +17,7 @@ importers:
   apps/web:
     specifiers:
       '@cloudflare/workers-types': ^3.16.0
+      '@formkit/auto-animate': 1.0.0-beta.3
       '@headlessui/react': ^1.6.6
       '@heroicons/react': ^2.0.10
       '@remix-run/cloudflare': ^1.7.0
@@ -37,6 +38,7 @@ importers:
       tiny-invariant: ^1.2.0
       typescript: ^4.7.4
     dependencies:
+      '@formkit/auto-animate': 1.0.0-beta.3
       '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.10_react@18.2.0
       '@remix-run/cloudflare': 1.7.0_rmlhqq3wqa7qw2ydvcfy7r72ym
@@ -1506,6 +1508,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /@formkit/auto-animate/1.0.0-beta.3:
+    resolution: {integrity: sha512-glsi+ytwQpxT/Ctr9GtcIfVr4dO6mJ04mQbNU8MFSdCdqMopHtyfU5Fib0+9lNFIeR0luY4/0NW95/2R5pKsag==}
+    dev: false
 
   /@gar/promisify/1.1.3:
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}

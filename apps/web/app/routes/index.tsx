@@ -1,3 +1,4 @@
+import { useAutoAnimate } from '@formkit/auto-animate/react'
 import {
   EnvelopeIcon,
   EyeIcon,
@@ -249,6 +250,7 @@ export default function Index() {
     atomicNoteFetcher.submission.formData.get('_action') ===
       ATOMIC_NOTE_ACTIONS.SEARCH
   const transition = useTransition()
+  const [atomicNoteParent] = useAutoAnimate<HTMLUListElement>()
 
   useEffect(() => {
     if (!mounted.current) {
@@ -420,14 +422,14 @@ export default function Index() {
                 </div>
               </atomicNoteFetcher.Form>
             )}
-            {atomicNotes.length === 0 ? (
+            {atomicNotes?.length === 0 ? (
               <p id="no-atomic-notes-prompt" className="mt-4">
                 No published atomic notes
               </p>
             ) : (
               <div>
-                <ul id="atomic-note-list">
-                  {atomicNotes.map(atomicNote => (
+                <ul id="atomic-note-list" ref={atomicNoteParent}>
+                  {atomicNotes?.map(atomicNote => (
                     <li
                       id={atomicNote.id}
                       key={atomicNote.id}
