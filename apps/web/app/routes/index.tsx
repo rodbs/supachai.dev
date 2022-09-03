@@ -101,6 +101,9 @@ export default function Index() {
                 </li>
               ))}
             </ul>
+            <p className="mt-8">
+              I can dive into new technologies and self-learn them quickly.
+            </p>
           </section>
         </main>
         <footer className="mt-8 mb-16 border-t pt-4 dark:border-zinc-800">
