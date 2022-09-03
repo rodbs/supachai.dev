@@ -49,10 +49,10 @@ export default function Index() {
   return (
     <>
       <Container>
-        <header className="mt-6">
+        <header>
           <NavBar />
         </header>
-        <main className="mt-10">
+        <main className="mt-16 sm:mt-20">
           <section className="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
             <h1 className="text-2xl font-bold">Fullstack Web Developer</h1>
             <p className="mt-4">
