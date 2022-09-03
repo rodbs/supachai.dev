@@ -1,4 +1,4 @@
-name = "web-worker"
+name = "supachaidev"
 main = "src/index.ts"
 compatibility_date = "2022-09-02"
 workers_dev = false
