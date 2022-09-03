@@ -341,7 +341,11 @@ export default function Index() {
                             update
                           </button>
                           <Link
-                            to="."
+                            to={`?${new URLSearchParams([
+                              ['atomicNoteId', ''],
+                              ['edit', 'false'],
+                              ...urlSearchParams.entries(),
+                            ])}#${atomicNote.id}`}
                             prefetch="intent"
                             className="ml-4 underline hover:text-zinc-600 dark:hover:text-zinc-500"
                           >
