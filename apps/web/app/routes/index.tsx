@@ -76,10 +76,15 @@ export async function loader({ context, request }: LoaderArgs) {
   const isAdmin = await authService.isAdmin()
 
   const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
-  const atomicNotes = (await atomicNoteService.getAll()).sort(
-    (a, b) =>
-      new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
-  )
+  const atomicNotes = (await atomicNoteService.getAll())
+    .filter(atomicNote => {
+      if (atomicNote.status === 'draft') return isAdmin
+      return true
+    })
+    .sort(
+      (a, b) =>
+        new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
+    )
 
   return json({ atomicNotes, isAuthenticated, isAdmin })
 }
@@ -228,7 +233,7 @@ export default function Index() {
               </atomicNoteFetcher.Form>
             )}
             {atomicNotes.length === 0 ? (
-              <p className="mt-4">No atomic notes</p>
+              <p className="mt-4">No published atomic notes</p>
             ) : (
               <ul>
                 {atomicNotes.map(atomicNote => (
