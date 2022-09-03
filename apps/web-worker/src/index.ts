@@ -1,4 +1,8 @@
-import { AppLoadContext, createRequestHandler } from '@remix-run/cloudflare'
+import {
+  AppLoadContext,
+  createCookieSessionStorage,
+  createRequestHandler,
+} from '@remix-run/cloudflare'
 import * as remixServerBuild from 'web'
 import { getAssets } from './utils'
 
@@ -33,8 +37,19 @@ export default {
     }
 
     try {
+      const sessionStorage = createCookieSessionStorage({
+        cookie: {
+          name: '_session',
+          secure: process.env.NODE_ENV === 'production',
+          path: '/',
+          httpOnly: true,
+          sameSite: 'lax',
+          secrets: env.SESSION_SECRETS.split(','),
+        },
+      })
       const loadContext: AppLoadContext = {
         env,
+        sessionStorage,
       }
       const response = await remixRequestHandler(request, loadContext)
       return response
