@@ -367,7 +367,7 @@ export default function Index() {
                 <label htmlFor="atomic-note-search-query" className="sr-only">
                   Search
                 </label>
-                <div className="flex w-full items-center border-b">
+                <div className="flex w-full items-center border-b dark:border-zinc-700">
                   <MagnifyingGlassIcon
                     aria-label="Magnifying glass icon"
                     className="h-5 w-5 text-zinc-400"
@@ -383,7 +383,7 @@ export default function Index() {
                   />
                 </div>
                 <div className="ml-2 flex">
-                  <button className="inline-flex items-center rounded border border-zinc-200 px-3 py-1 font-sans text-sm font-medium text-zinc-400">
+                  <button className="inline-flex items-center rounded border border-zinc-200 px-3 py-1 font-sans text-sm font-medium text-zinc-400 dark:border-zinc-700">
                     Search
                   </button>
                 </div>
