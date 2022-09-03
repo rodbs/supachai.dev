@@ -20,6 +20,9 @@ import { getAuthService } from '~/auth'
 import { Container } from '~/components/container'
 import NavBar from '~/components/navbar'
 
+const ATOMIC_NOTES_PER_PAGE = 3
+const LOAD_MORE_COUNT = 3
+
 const ATOMIC_NOTE_ACTIONS = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
@@ -103,6 +106,18 @@ export async function loader({ context, request }: LoaderArgs) {
   )
   const isAdmin = await authService.isAdmin()
 
+  const url = new URL(request.url)
+  const atomicNoteOffsetParam = url.searchParams.get('atomicNoteOffset')
+  invariant(
+    !atomicNoteOffsetParam || typeof atomicNoteOffsetParam === 'string',
+    'atomic note offset must be a string',
+  )
+  const atomicNoteOffsetMaybeInt = atomicNoteOffsetParam
+    ? parseInt(atomicNoteOffsetParam)
+    : 0
+  const atomicNoteOffset =
+    typeof atomicNoteOffsetMaybeInt === 'number' ? atomicNoteOffsetMaybeInt : 0
+
   const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
   const atomicNotes = (await atomicNoteService.getAll())
     .filter(atomicNote => {
@@ -114,7 +129,18 @@ export async function loader({ context, request }: LoaderArgs) {
         new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
     )
 
-  return json({ atomicNotes, isAuthenticated, isAdmin })
+  const slicedAtomicNotes = atomicNotes.slice(
+    0,
+    ATOMIC_NOTES_PER_PAGE + atomicNoteOffset,
+  )
+  const hasMoreAtomicNotes = atomicNotes.length > slicedAtomicNotes.length
+
+  return json({
+    atomicNotes: slicedAtomicNotes,
+    hasMoreAtomicNotes,
+    isAuthenticated,
+    isAdmin,
+  })
 }
 
 interface TechStack {
@@ -162,7 +188,7 @@ const techStack: Array<TechStack> = [
 ]
 
 export default function Index() {
-  const { atomicNotes, isAuthenticated, isAdmin } =
+  const { atomicNotes, hasMoreAtomicNotes, isAuthenticated, isAdmin } =
     useLoaderData<typeof loader>()
   const atomicNoteFetcher = useFetcher()
   const isCreatingAtomicNote =
@@ -171,6 +197,7 @@ export default function Index() {
       ATOMIC_NOTE_ACTIONS.CREATE
   const location = useLocation()
   const [urlSearchParams] = useSearchParams()
+  const atomicNoteOffset = urlSearchParams.get('atomicNoteOffset') ?? '0'
 
   return (
     <>
@@ -263,90 +290,111 @@ export default function Index() {
             {atomicNotes.length === 0 ? (
               <p className="mt-4">No published atomic notes</p>
             ) : (
-              <ul>
-                {atomicNotes.map(atomicNote => (
-                  <li key={atomicNote.id} className="mt-4 flex items-center">
-                    {urlSearchParams.get('edit') === 'true' &&
-                    urlSearchParams.get('atomicNoteId') === atomicNote.id ? (
-                      <atomicNoteFetcher.Form method="post" replace>
-                        <input
-                          type="hidden"
-                          name="atomicNoteId"
-                          value={atomicNote.id}
-                        />
-                        <input
-                          required
-                          type="text"
-                          name="atomicNoteBody"
-                          id="atomic-note-body"
-                          className="border-b bg-transparent dark:border-zinc-700"
-                          defaultValue={atomicNote.body}
-                        />
-                        <button
-                          name="_action"
-                          value={ATOMIC_NOTE_ACTIONS.UPDATE}
-                          className="ml-4 underline hover:text-zinc-600 dark:hover:text-zinc-500"
-                        >
-                          update
-                        </button>
-                        <Link
-                          to="."
-                          prefetch="intent"
-                          className="ml-4 underline hover:text-zinc-600 dark:hover:text-zinc-500"
-                        >
-                          cancel
-                        </Link>
-                      </atomicNoteFetcher.Form>
-                    ) : (
-                      <AtomicNoteItem note={atomicNote} />
-                    )}
-                    {isAdmin &&
-                      urlSearchParams.get('atomicNoteId') !== atomicNote.id && (
-                        <div className="flex items-center">
+              <div>
+                <ul>
+                  {atomicNotes.map(atomicNote => (
+                    <li
+                      id={atomicNote.id}
+                      key={atomicNote.id}
+                      className="mt-4 flex items-center"
+                    >
+                      {urlSearchParams.get('edit') === 'true' &&
+                      urlSearchParams.get('atomicNoteId') === atomicNote.id ? (
+                        <atomicNoteFetcher.Form method="post" replace>
+                          <input
+                            type="hidden"
+                            name="atomicNoteId"
+                            value={atomicNote.id}
+                          />
+                          <input
+                            required
+                            type="text"
+                            name="atomicNoteBody"
+                            id="atomic-note-body"
+                            className="border-b bg-transparent dark:border-zinc-700"
+                            defaultValue={atomicNote.body}
+                          />
+                          <button
+                            name="_action"
+                            value={ATOMIC_NOTE_ACTIONS.UPDATE}
+                            className="ml-4 underline hover:text-zinc-600 dark:hover:text-zinc-500"
+                          >
+                            update
+                          </button>
                           <Link
-                            to={`${location.pathname}?${new URLSearchParams([
-                              ['atomicNoteId', atomicNote.id],
-                              ['edit', 'true'],
-                              ...urlSearchParams.entries(),
-                            ])}`}
+                            to="."
                             prefetch="intent"
+                            className="ml-4 underline hover:text-zinc-600 dark:hover:text-zinc-500"
                           >
-                            <PencilSquareIcon className="ml-4 h-5 w-5" />
+                            cancel
                           </Link>
-                          <atomicNoteFetcher.Form
-                            method="post"
-                            className="ml-4 flex"
-                          >
-                            <input
-                              type="hidden"
-                              name="atomicNoteId"
-                              value={atomicNote.id}
-                            />
-                            <input
-                              type="hidden"
-                              name="status"
-                              value={
-                                atomicNote.status === 'published'
-                                  ? 'draft'
-                                  : 'published'
-                              }
-                            />
-                            <button
-                              name="_action"
-                              value={ATOMIC_NOTE_ACTIONS.TOGGLE_VISIBILITY}
-                            >
-                              {atomicNote.status === 'published' ? (
-                                <EyeIcon className="h-5 w-5" />
-                              ) : (
-                                <EyeSlashIcon className="h-5 w-5" />
-                              )}
-                            </button>
-                          </atomicNoteFetcher.Form>
-                        </div>
+                        </atomicNoteFetcher.Form>
+                      ) : (
+                        <AtomicNoteItem note={atomicNote} />
                       )}
-                  </li>
-                ))}
-              </ul>
+                      {isAdmin &&
+                        urlSearchParams.get('atomicNoteId') !==
+                          atomicNote.id && (
+                          <div className="flex items-center">
+                            <Link
+                              to={`${location.pathname}?${new URLSearchParams([
+                                ['atomicNoteId', atomicNote.id],
+                                ['edit', 'true'],
+                                ...urlSearchParams.entries(),
+                              ])}`}
+                              prefetch="intent"
+                            >
+                              <PencilSquareIcon className="ml-4 h-5 w-5" />
+                            </Link>
+                            <atomicNoteFetcher.Form
+                              method="post"
+                              className="ml-4 flex"
+                            >
+                              <input
+                                type="hidden"
+                                name="atomicNoteId"
+                                value={atomicNote.id}
+                              />
+                              <input
+                                type="hidden"
+                                name="status"
+                                value={
+                                  atomicNote.status === 'published'
+                                    ? 'draft'
+                                    : 'published'
+                                }
+                              />
+                              <button
+                                name="_action"
+                                value={ATOMIC_NOTE_ACTIONS.TOGGLE_VISIBILITY}
+                              >
+                                {atomicNote.status === 'published' ? (
+                                  <EyeIcon className="h-5 w-5" />
+                                ) : (
+                                  <EyeSlashIcon className="h-5 w-5" />
+                                )}
+                              </button>
+                            </atomicNoteFetcher.Form>
+                          </div>
+                        )}
+                    </li>
+                  ))}
+                </ul>
+                {hasMoreAtomicNotes && (
+                  <Link
+                    to={`/?${new URLSearchParams([
+                      [
+                        'atomicNoteOffset',
+                        (+atomicNoteOffset + LOAD_MORE_COUNT).toString(),
+                      ],
+                      ...urlSearchParams.entries(),
+                    ])}#${atomicNotes[atomicNotes.length - 1].id}`}
+                    className="mt-4 flex w-fit underline"
+                  >
+                    load more
+                  </Link>
+                )}
+              </div>
             )}
           </section>
         </main>
