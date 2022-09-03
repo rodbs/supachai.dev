@@ -363,7 +363,10 @@ export default function Index() {
                               ])}`}
                               prefetch="intent"
                             >
-                              <PencilSquareIcon className="ml-4 h-5 w-5" />
+                              <PencilSquareIcon
+                                aria-label="Pencil Square Icon"
+                                className="ml-4 h-5 w-5"
+                              />
                             </Link>
                             <atomicNoteFetcher.Form
                               method="post"
@@ -384,13 +387,20 @@ export default function Index() {
                                 }
                               />
                               <button
+                                aria-label="Toggle status"
                                 name="_action"
                                 value={ATOMIC_NOTE_ACTIONS.TOGGLE_VISIBILITY}
                               >
                                 {atomicNote.status === 'published' ? (
-                                  <EyeIcon className="h-5 w-5" />
+                                  <EyeIcon
+                                    aria-label="Eye Icon"
+                                    className="h-5 w-5"
+                                  />
                                 ) : (
-                                  <EyeSlashIcon className="h-5 w-5" />
+                                  <EyeSlashIcon
+                                    aria-label="Eye Slash Icon"
+                                    className="h-5 w-5"
+                                  />
                                 )}
                               </button>
                             </atomicNoteFetcher.Form>
