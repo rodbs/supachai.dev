@@ -408,7 +408,7 @@ export default function Index() {
                     name="atomicNoteBody"
                     id="atomic-note-body"
                     placeholder="Create note..."
-                    className="w-full border-b bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:border-zinc-700 dark:placeholder:text-zinc-600"
+                    className="w-full rounded-none border-b bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:border-zinc-700 dark:placeholder:text-zinc-600"
                   />
                   <button
                     name="_action"
