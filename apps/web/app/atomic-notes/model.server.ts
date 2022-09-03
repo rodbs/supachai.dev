@@ -3,4 +3,5 @@ export interface AtomicNote {
   body: string
   dateCreated: string
   status: 'published' | 'draft' | 'deleted'
+  starredBy: Array<string>
 }
