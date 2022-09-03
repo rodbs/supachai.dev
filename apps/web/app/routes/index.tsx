@@ -203,6 +203,7 @@ export default function Index() {
                     Create note...
                   </label>
                   <input
+                    required
                     type="text"
                     name="atomicNoteBody"
                     id="atomic-note-body"
@@ -238,6 +239,7 @@ export default function Index() {
                           value={atomicNote.id}
                         />
                         <input
+                          required
                           type="text"
                           name="atomicNoteBody"
                           id="atomic-note-body"
