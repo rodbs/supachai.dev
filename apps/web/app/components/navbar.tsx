@@ -1,10 +1,19 @@
 import { Disclosure, Transition } from '@headlessui/react'
 import { EnvelopeIcon } from '@heroicons/react/20/solid'
 import {
+  ArrowLeftOnRectangleIcon,
+  ArrowRightOnRectangleIcon,
   Bars3Icon as MenuIcon,
   XMarkIcon as XIcon,
 } from '@heroicons/react/24/outline'
-import { Link, NavLink, useLocation, useSearchParams } from '@remix-run/react'
+import {
+  Link,
+  NavLink,
+  useFetcher,
+  useLocation,
+  useSearchParams,
+} from '@remix-run/react'
+import { useSpinDelay } from 'spin-delay'
 import Logo from '~/components/logo'
 import { classNames } from '~/utils'
 import { Container } from './container'
@@ -16,7 +25,7 @@ interface LinkItem {
 
 const navigation: Array<LinkItem> = [{ href: '/', name: 'Home' }]
 
-function NavBar() {
+function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [urlSearchParams] = useSearchParams()
   const location = useLocation()
   const navSearchParams = new URLSearchParams(urlSearchParams)
@@ -28,6 +37,11 @@ function NavBar() {
   } else {
     navSearchParams.append('nav', 'true')
   }
+  const authFetcher = useFetcher()
+  const redirect = Array.from(urlSearchParams.keys()).length
+    ? `${location.pathname}?${urlSearchParams}`
+    : location.pathname
+  const isLoggingInOrOut = useSpinDelay(Boolean(authFetcher.submission))
 
   return (
     <Disclosure
@@ -38,8 +52,8 @@ function NavBar() {
     >
       {({ open }) => (
         <Container>
-          <div className="flex justify-between">
-            <div className="flex items-center sm:w-full sm:justify-between">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center sm:w-full">
               <div className="flex items-center">
                 <Link
                   to="/"
@@ -58,7 +72,7 @@ function NavBar() {
                   <EnvelopeIcon className="h-6 w-auto" />
                 </a>
               </div>
-              <div className="hidden sm:flex sm:space-x-8">
+              <div className="hidden sm:ml-8 sm:flex sm:space-x-8">
                 {navigation.map(({ href, name }) => (
                   <NavLink
                     className={({ isActive }) =>
@@ -93,18 +107,55 @@ function NavBar() {
                 ))}
               </div>
             </div>
-            <div className="-mr-2 flex items-center sm:hidden">
-              <Link
-                to={`${location.pathname}?${navSearchParams}`}
-                className="hamburger-menu-link inline-flex items-center justify-center rounded-md p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-zinc-300 dark:text-zinc-600 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 dark:focus:ring-zinc-900"
-              >
-                <span className="sr-only">Open main menu</span>
-                {open ? (
-                  <XIcon className="block h-6 w-6" aria-hidden="true" />
-                ) : (
-                  <MenuIcon className="block h-6 w-6" aria-hidden="true" />
-                )}
-              </Link>
+            <div className="flex items-center sm:ml-8">
+              <div className="mr-4 sm:mr-0 sm:w-28">
+                <authFetcher.Form
+                  replace
+                  method="post"
+                  action={
+                    isAuthenticated
+                      ? `/auth/logout?${new URLSearchParams({
+                          redirect,
+                        })}`
+                      : `/auth/github?${new URLSearchParams({
+                          redirect,
+                        })}`
+                  }
+                >
+                  <button
+                    disabled={isLoggingInOrOut}
+                    className="flex items-center text-zinc-600 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-500"
+                  >
+                    {isAuthenticated ? (
+                      <ArrowLeftOnRectangleIcon className="h-6 w-6 sm:h-7 sm:w-7" />
+                    ) : (
+                      <ArrowRightOnRectangleIcon className="h-6 w-6 sm:h-7 sm:w-7" />
+                    )}
+                    <span className="ml-1 text-sm font-medium sm:text-base">
+                      {isAuthenticated
+                        ? isLoggingInOrOut
+                          ? 'Loggin out'
+                          : 'Log out'
+                        : isLoggingInOrOut
+                        ? 'Loggin in'
+                        : 'Log in'}
+                    </span>
+                  </button>
+                </authFetcher.Form>
+              </div>
+              <div className="-mr-2 flex items-center sm:hidden">
+                <Link
+                  to={`${location.pathname}?${navSearchParams}`}
+                  className="hamburger-menu-link inline-flex items-center justify-center rounded-md p-2 text-zinc-400 hover:bg-zinc-100 hover:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-zinc-300 dark:text-zinc-600 dark:hover:bg-zinc-800/50 dark:hover:text-zinc-300 dark:focus:ring-zinc-900"
+                >
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XIcon className="block h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                  )}
+                </Link>
+              </div>
             </div>
           </div>
 

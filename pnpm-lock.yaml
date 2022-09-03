@@ -32,7 +32,9 @@ importers:
       react-dom: ^18.2.0
       remix-auth: ^3.2.2
       remix-auth-github: ^1.1.1
+      spin-delay: ^1.2.0
       tailwindcss: ^3.1.8
+      tiny-invariant: ^1.2.0
       typescript: ^4.7.4
     dependencies:
       '@headlessui/react': 1.6.6_biqbaboplfbrettd7655fr4n2y
@@ -43,7 +45,9 @@ importers:
       react-dom: 18.2.0_react@18.2.0
       remix-auth: 3.2.2_iwkoj4i7onot5qamk6olkm5qze
       remix-auth-github: 1.1.1_iwkoj4i7onot5qamk6olkm5qze
+      spin-delay: 1.2.0_react@18.2.0
       tailwindcss: 3.1.8_postcss@8.4.16
+      tiny-invariant: 1.2.0
     devDependencies:
       '@cloudflare/workers-types': 3.16.0
       '@remix-run/dev': 1.7.0_biqbaboplfbrettd7655fr4n2y
@@ -7036,6 +7040,14 @@ packages:
     resolution: {integrity: sha512-n98l9E2RMSJ9ON1AKisHzz7V42VDiBQGY6PB1BwRglz99wpVsSuGzQ+jOi6lFXBGVTCrRpltvjm+/XA+tpeJrg==}
     dev: true
 
+  /spin-delay/1.2.0_react@18.2.0:
+    resolution: {integrity: sha512-PkZl5FHWOMrwQgoWejG1hBkIlVx4KbdL/37RPr5/pGq5+NWcGx7NNDukFct2yr8yRZuvwEompNR/in9nWj4sTw==}
+    peerDependencies:
+      react: '>=17.0.1'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /split-string/3.1.0:
     resolution: {integrity: sha512-NzNVhJDYpwceVVii8/Hu6DKfD2G+NrQHlS/V/qgv763EYudVwEcMQNxd2lh+0VrUByXN/oJkl5grOhYWvQUYiw==}
     engines: {node: '>=0.10.0'}
@@ -7273,6 +7285,10 @@ packages:
       readable-stream: 2.3.7
       xtend: 4.0.2
     dev: true
+
+  /tiny-invariant/1.2.0:
+    resolution: {integrity: sha512-1Uhn/aqw5C6RI4KejVeTg6mIS7IqxnLJ8Mv2tV5rTc0qWobay7pDUz6Wi392Cnc8ak1H0F2cjoRzb2/AW4+Fvg==}
+    dev: false
 
   /tmp/0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}

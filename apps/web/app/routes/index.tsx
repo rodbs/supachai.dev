@@ -1,16 +1,57 @@
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
-import type { LoaderArgs } from '@remix-run/cloudflare'
+import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json } from '@remix-run/cloudflare'
-import { useLoaderData } from '@remix-run/react'
+import { useFetcher, useLoaderData } from '@remix-run/react'
+import invariant from 'tiny-invariant'
+import type { AtomicNote } from '~/atomic-notes'
 import { getAtomicNoteService } from '~/atomic-notes'
+import { getAuthService } from '~/auth'
 import { Container } from '~/components/container'
 import NavBar from '~/components/navbar'
 
+const ATOMIC_NOTE_ACTIONS = {
+  CREATE: 'CREATE',
+} as const
+
+export async function action({ context, request }: ActionArgs) {
+  const formData = await request.formData()
+  const action = formData.get('_action')
+
+  if (action === ATOMIC_NOTE_ACTIONS.CREATE) {
+    const authService = await getAuthService({ context, request })
+    if (!(await authService.isAdmin()))
+      throw new Response('Unauthorized', { status: 401 })
+
+    const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
+    const atomicNoteBody = formData.get('atomicNoteBody')
+    invariant(
+      typeof atomicNoteBody === 'string',
+      'atomic note body must be a string',
+    )
+    const atomicNote: AtomicNote = {
+      id: crypto.randomUUID(),
+      body: atomicNoteBody,
+      dateCreated: new Date().toISOString(),
+      starredBy: [],
+      status: 'draft',
+    }
+    return json({ atomicNote: await atomicNoteService.create(atomicNote) })
+  }
+
+  throw new Error('Invalid action')
+}
+
 export async function loader({ context, request }: LoaderArgs) {
+  const authService = await getAuthService({ context, request })
+  const isAuthenticated = Boolean(
+    await authService.authenticator.isAuthenticated(request),
+  )
+  const isAdmin = await authService.isAdmin()
+
   const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
   const atomicNotes = await atomicNoteService.getAll()
 
-  return json({ atomicNotes })
+  return json({ atomicNotes, isAuthenticated, isAdmin })
 }
 
 interface TechStack {
@@ -58,13 +99,19 @@ const techStack: Array<TechStack> = [
 ]
 
 export default function Index() {
-  const { atomicNotes } = useLoaderData<typeof loader>()
+  const { atomicNotes, isAuthenticated, isAdmin } =
+    useLoaderData<typeof loader>()
+  const atomicNoteFetcher = useFetcher()
+  const isCreatingAtomicNote =
+    atomicNoteFetcher.state === 'submitting' &&
+    atomicNoteFetcher.submission.formData.get('_action') ===
+      ATOMIC_NOTE_ACTIONS.CREATE
 
   return (
     <>
       <Container>
         <header>
-          <NavBar />
+          <NavBar isAuthenticated={isAuthenticated} />
         </header>
         <main className="mt-24 sm:mt-28">
           <section className="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
@@ -120,9 +167,44 @@ export default function Index() {
           </section>
           <section className="mt-8 sm:mt-12">
             <h2 className="text-xl font-bold">Atomic Notes</h2>
+            {isAdmin && (
+              <atomicNoteFetcher.Form method="post" className="mt-3">
+                <div className="relative flex items-center">
+                  <label htmlFor="atomic-note-body" className="sr-only">
+                    Create note...
+                  </label>
+                  <input
+                    type="text"
+                    name="atomicNoteBody"
+                    id="atomic-note-body"
+                    placeholder="Create note..."
+                    className="w-full border-b bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:placeholder:text-zinc-600"
+                  />
+                  <button
+                    name="_action"
+                    value={ATOMIC_NOTE_ACTIONS.CREATE}
+                    disabled={isCreatingAtomicNote}
+                  >
+                    <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
+                      <kbd className="inline-flex items-center rounded border border-zinc-200 px-3 font-sans text-sm font-medium text-zinc-400">
+                        ⏎
+                      </kbd>
+                    </div>
+                  </button>
+                </div>
+              </atomicNoteFetcher.Form>
+            )}
             {atomicNotes.length === 0 ? (
               <p className="mt-4">No atomic notes</p>
-            ) : null}
+            ) : (
+              <ul>
+                {atomicNotes.map(atomicNote => (
+                  <li key={atomicNote.id} className="mt-4">
+                    <AtomicNoteItem note={atomicNote} />
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         </main>
         <footer className="mt-8 mb-16 border-t pt-4 dark:border-zinc-800">
@@ -136,5 +218,14 @@ export default function Index() {
         </footer>
       </Container>
     </>
+  )
+}
+
+function AtomicNoteItem({ note }: { note: AtomicNote }) {
+  return (
+    <div className="relative flex items-center">
+      <span className="absolute inset-y-0 top-1 left-0">•</span>
+      <p className="py-1 pl-4">{note.body}</p>
+    </div>
   )
 }
