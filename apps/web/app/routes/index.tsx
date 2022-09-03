@@ -72,7 +72,22 @@ export async function action({ context, request }: ActionArgs) {
     )
     const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
     await atomicNoteService.update(atomicNoteId, { body: atomicNoteBody })
-    return redirect('/')
+
+    const urlSearchParamsString = formData.get('urlSearchParams')
+    if (!urlSearchParamsString) return redirect(`/#${atomicNoteId}`)
+    invariant(
+      typeof urlSearchParamsString === 'string',
+      'urlSearchParams must be a string',
+    )
+    const urlSearchParams = new URLSearchParams(urlSearchParamsString)
+
+    return redirect(
+      `/?${new URLSearchParams([
+        ['atomicNoteId', ''],
+        ['edit', 'false'],
+        ...urlSearchParams.entries(),
+      ])}#${atomicNoteId}`,
+    )
   }
 
   if (action === ATOMIC_NOTE_ACTIONS.TOGGLE_VISIBILITY) {
@@ -324,6 +339,11 @@ export default function Index() {
                             type="hidden"
                             name="atomicNoteId"
                             value={atomicNote.id}
+                          />
+                          <input
+                            type="hidden"
+                            name="urlSearchParams"
+                            value={urlSearchParams.toString()}
                           />
                           <input
                             required
