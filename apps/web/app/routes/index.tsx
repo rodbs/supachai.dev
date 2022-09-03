@@ -62,7 +62,7 @@ export default function Index() {
           </section>
           <section className="mt-10">
             <h2 className="text-xl font-bold">Tech Stack</h2>
-            <ul className="mt-6 space-y-4">
+            <ul className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
               {techStack.map(({ name, iconSrc, href }) => (
                 <li key={name}>
                   <a
