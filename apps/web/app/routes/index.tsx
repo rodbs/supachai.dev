@@ -166,9 +166,6 @@ export async function loader({ context, request }: LoaderArgs) {
     hasMoreAtomicNotes,
     isAuthenticated,
     isAdmin,
-    scrollToAtomicNotes: Boolean(
-      url.searchParams.get('_action') === ATOMIC_NOTE_ACTIONS.SEARCH,
-    ),
     atomicNoteSearchQuery: url.searchParams.get('atomicNoteSearchQuery') || '',
   }
 
@@ -225,7 +222,6 @@ export default function Index() {
     hasMoreAtomicNotes: _hasMoreAtomicNotes,
     isAuthenticated,
     isAdmin,
-    scrollToAtomicNotes,
     atomicNoteSearchQuery: _atomicNoteSearchQuery,
   } = useLoaderData<typeof loader>()
   const [atomicNotes, setAtomicNotes] = useState(_atomicNotes)
@@ -265,6 +261,9 @@ export default function Index() {
     setAtomicNoteSearchQuery(atomicNoteFetcher.data?.atomicNoteSearchQuery)
     setAtomicNotes(atomicNoteFetcher.data?.atomicNotes)
     setHasMoreAtomicNotes(atomicNoteFetcher.data?.hasMoreAtomicNotes)
+    document
+      .querySelector('#atomic-note-list')
+      ?.scrollIntoView({ behavior: 'smooth' })
   }, [
     atomicNoteFetcher.data?.atomicNoteSearchQuery,
     atomicNoteFetcher.data?.atomicNotes,
@@ -272,12 +271,6 @@ export default function Index() {
     isCreatingAtomicNote,
     isSearchingAtomicNotes,
   ])
-
-  useEffect(() => {
-    if (scrollToAtomicNotes)
-      document.querySelector('#atomic-note-list')?.scrollIntoView() ||
-        document.querySelector('#no-atomic-notes-prompt')?.scrollIntoView()
-  }, [scrollToAtomicNotes])
 
   useEffect(() => {
     if (transition.state === 'submitting') return
