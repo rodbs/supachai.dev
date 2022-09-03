@@ -13,6 +13,7 @@ import {
   useFetcher,
   useLoaderData,
   useLocation,
+  useNavigate,
   useSearchParams,
   useTransition,
 } from '@remix-run/react'
@@ -166,7 +167,7 @@ export async function loader({ context, request }: LoaderArgs) {
     hasMoreAtomicNotes,
     isAuthenticated,
     isAdmin,
-    atomicNoteSearchQuery: url.searchParams.get('atomicNoteSearchQuery') || '',
+    atomicNoteSearchQuery: url.searchParams.get('atomicNoteSearchQuery') ?? '',
   }
 
   return json(data)
@@ -247,6 +248,7 @@ export default function Index() {
       ATOMIC_NOTE_ACTIONS.SEARCH
   const transition = useTransition()
   const [atomicNoteParent] = useAutoAnimate<HTMLUListElement>()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!mounted.current) {
@@ -255,12 +257,17 @@ export default function Index() {
     }
 
     if (isCreatingAtomicNote) return
-    if (isSearchingAtomicNotes) return
+    if (isSearchingAtomicNotes) {
+      if (!atomicNoteFetcher.submission?.formData.get('atomicNoteSearchQuery'))
+        navigate('/#atomic-note-list', { replace: true })
+      return
+    }
 
     createNoteFormRef.current?.reset()
     setAtomicNoteSearchQuery(atomicNoteFetcher.data?.atomicNoteSearchQuery)
     setAtomicNotes(atomicNoteFetcher.data?.atomicNotes)
     setHasMoreAtomicNotes(atomicNoteFetcher.data?.hasMoreAtomicNotes)
+
     document
       .querySelector('#atomic-note-list')
       ?.scrollIntoView({ behavior: 'smooth' })
@@ -268,8 +275,10 @@ export default function Index() {
     atomicNoteFetcher.data?.atomicNoteSearchQuery,
     atomicNoteFetcher.data?.atomicNotes,
     atomicNoteFetcher.data?.hasMoreAtomicNotes,
+    atomicNoteFetcher.submission?.formData,
     isCreatingAtomicNote,
     isSearchingAtomicNotes,
+    navigate,
   ])
 
   useEffect(() => {
@@ -536,8 +545,8 @@ export default function Index() {
                         'atomicNoteOffset',
                         (+atomicNoteOffset + LOAD_MORE_COUNT).toString(),
                       ],
-                      ['atomicNoteSearchQuery', atomicNoteSearchQuery],
                       ...urlSearchParams.entries(),
+                      ['atomicNoteSearchQuery', atomicNoteSearchQuery],
                     ])}#${atomicNotes[atomicNotes.length - 1].id}`}
                     className="mt-4 flex w-fit underline"
                   >
