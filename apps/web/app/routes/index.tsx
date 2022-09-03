@@ -360,7 +360,7 @@ export default function Index() {
                                 ['atomicNoteId', atomicNote.id],
                                 ['edit', 'true'],
                                 ...urlSearchParams.entries(),
-                              ])}`}
+                              ])}#${atomicNote.id}`}
                               prefetch="intent"
                             >
                               <PencilSquareIcon
