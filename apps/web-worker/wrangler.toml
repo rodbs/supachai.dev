@@ -2,6 +2,9 @@ name = "supachaidev"
 main = "src/index.ts"
 compatibility_date = "2022-09-02"
 workers_dev = false
+kv_namespaces = [
+  { binding = "KV_ATOMIC_NOTES", id = "c177f75e345e48f8ba61c7789fe56be6", preview_id = "f365212667d04598bd8e43758ebc2fe2" },
+]
 
 [site]
 bucket = '../web/public'
