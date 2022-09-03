@@ -2,6 +2,7 @@ import {
   EnvelopeIcon,
   EyeIcon,
   EyeSlashIcon,
+  MagnifyingGlassIcon,
   PencilSquareIcon,
 } from '@heroicons/react/24/outline'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
@@ -28,6 +29,7 @@ const ATOMIC_NOTE_ACTIONS = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
   TOGGLE_VISIBILITY: 'TOGGLE_VISIBILITY',
+  SEARCH: 'SEARCH',
 } as const
 
 export async function action({ context, request }: ActionArgs) {
@@ -140,6 +142,11 @@ export async function loader({ context, request }: LoaderArgs) {
       if (atomicNote.status === 'draft') return isAdmin
       return true
     })
+    .filter(atomicNote => {
+      const search = url.searchParams.get('atomicNoteSearchQuery')
+      if (!search) return true
+      return atomicNote.body.toLowerCase().includes(search.toLowerCase())
+    })
     .sort(
       (a, b) =>
         new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
@@ -151,12 +158,18 @@ export async function loader({ context, request }: LoaderArgs) {
   )
   const hasMoreAtomicNotes = atomicNotes.length > slicedAtomicNotes.length
 
-  return json({
+  const data = {
     atomicNotes: slicedAtomicNotes,
     hasMoreAtomicNotes,
     isAuthenticated,
     isAdmin,
-  })
+    scrollToAtomicNotes: Boolean(
+      url.searchParams.get('_action') === ATOMIC_NOTE_ACTIONS.SEARCH,
+    ),
+    searchQuery: url.searchParams.get('atomicNoteSearchQuery') || '',
+  }
+
+  return json(data)
 }
 
 interface TechStack {
@@ -204,8 +217,14 @@ const techStack: Array<TechStack> = [
 ]
 
 export default function Index() {
-  const { atomicNotes, hasMoreAtomicNotes, isAuthenticated, isAdmin } =
-    useLoaderData<typeof loader>()
+  const {
+    atomicNotes,
+    hasMoreAtomicNotes,
+    isAuthenticated,
+    isAdmin,
+    scrollToAtomicNotes,
+    searchQuery,
+  } = useLoaderData<typeof loader>()
   const atomicNoteFetcher = useFetcher()
   const isCreatingAtomicNote =
     atomicNoteFetcher.state === 'submitting' &&
@@ -216,6 +235,7 @@ export default function Index() {
   const atomicNoteOffset = urlSearchParams.get('atomicNoteOffset') ?? '0'
   const mounted = useRef(false)
   const createNoteFormRef = useRef<HTMLFormElement>(null)
+  const searchFormRef = useRef<HTMLFormElement>(null)
 
   useEffect(() => {
     if (!mounted.current) {
@@ -227,6 +247,12 @@ export default function Index() {
 
     createNoteFormRef.current?.reset()
   }, [isCreatingAtomicNote])
+
+  useEffect(() => {
+    if (scrollToAtomicNotes)
+      document.querySelector('#atomic-note-list')?.scrollIntoView() ||
+        document.querySelector('#no-atomic-notes-prompt')?.scrollIntoView()
+  }, [scrollToAtomicNotes])
 
   return (
     <>
@@ -288,6 +314,38 @@ export default function Index() {
           </section>
           <section className="mt-8 sm:mt-12">
             <h2 className="text-xl font-bold">Atomic Notes</h2>
+            <atomicNoteFetcher.Form
+              replace
+              method="get"
+              ref={searchFormRef}
+              className="mt-3"
+              reloadDocument
+            >
+              <input
+                type="hidden"
+                name="_action"
+                value={ATOMIC_NOTE_ACTIONS.SEARCH}
+              />
+              <div className="relative flex items-center">
+                <label htmlFor="atomic-note-search-query" className="sr-only">
+                  Search
+                </label>
+                <div className="flex w-full items-center border-b">
+                  <MagnifyingGlassIcon
+                    aria-label="Magnifying glass icon"
+                    className="h-5 w-5 text-zinc-400"
+                  />
+                  <input
+                    type="text"
+                    name="atomicNoteSearchQuery"
+                    id="atomic-note-search-query"
+                    placeholder="Search"
+                    className="ml-2 w-full bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:placeholder:text-zinc-600"
+                    defaultValue={searchQuery}
+                  />
+                </div>
+              </div>
+            </atomicNoteFetcher.Form>
             {isAdmin && (
               <atomicNoteFetcher.Form
                 ref={createNoteFormRef}
@@ -322,10 +380,12 @@ export default function Index() {
               </atomicNoteFetcher.Form>
             )}
             {atomicNotes.length === 0 ? (
-              <p className="mt-4">No published atomic notes</p>
+              <p id="no-atomic-notes-prompt" className="mt-4">
+                No published atomic notes
+              </p>
             ) : (
               <div>
-                <ul>
+                <ul id="atomic-note-list">
                   {atomicNotes.map(atomicNote => (
                     <li
                       id={atomicNote.id}
