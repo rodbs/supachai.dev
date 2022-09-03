@@ -13,6 +13,7 @@ import {
   useLocation,
   useSearchParams,
 } from '@remix-run/react'
+import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import type { AtomicNote } from '~/atomic-notes'
 import { getAtomicNoteService } from '~/atomic-notes'
@@ -198,6 +199,19 @@ export default function Index() {
   const location = useLocation()
   const [urlSearchParams] = useSearchParams()
   const atomicNoteOffset = urlSearchParams.get('atomicNoteOffset') ?? '0'
+  const mounted = useRef(false)
+  const createNoteFormRef = useRef<HTMLFormElement>(null)
+
+  useEffect(() => {
+    if (!mounted.current) {
+      mounted.current = true
+      return
+    }
+
+    if (isCreatingAtomicNote) return
+
+    createNoteFormRef.current?.reset()
+  }, [isCreatingAtomicNote])
 
   return (
     <>
@@ -260,7 +274,12 @@ export default function Index() {
           <section className="mt-8 sm:mt-12">
             <h2 className="text-xl font-bold">Atomic Notes</h2>
             {isAdmin && (
-              <atomicNoteFetcher.Form replace method="post" className="mt-3">
+              <atomicNoteFetcher.Form
+                ref={createNoteFormRef}
+                replace
+                method="post"
+                className="mt-3"
+              >
                 <div className="relative flex items-center">
                   <label htmlFor="atomic-note-body" className="sr-only">
                     Create note...
