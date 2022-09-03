@@ -1,4 +1,5 @@
 import { Disclosure, Transition } from '@headlessui/react'
+import { EnvelopeIcon } from '@heroicons/react/20/solid'
 import {
   Bars3Icon as MenuIcon,
   XMarkIcon as XIcon,
@@ -39,16 +40,24 @@ function NavBar() {
         <Container>
           <div className="flex justify-between">
             <div className="flex items-center sm:w-full sm:justify-between">
-              <Link
-                to="/"
-                prefetch="intent"
-                className="-ml-2 flex h-fit w-fit items-center"
-              >
-                <Logo classNames="w-8 dark:text-zinc-400" />
-                <span className="font-bold dark:text-zinc-400 sm:text-lg">
-                  Supachai.dev
-                </span>
-              </Link>
+              <div className="flex items-center">
+                <Link
+                  to="/"
+                  prefetch="intent"
+                  className="-ml-2 flex h-fit w-fit items-center"
+                >
+                  <Logo classNames="w-8 dark:text-zinc-400" />
+                  <span className="font-bold dark:text-zinc-400 sm:text-lg">
+                    Supachai.dev
+                  </span>
+                </Link>
+                <a
+                  href="mailto:contact@supachai.dev"
+                  className="ml-4 flex w-fit text-zinc-700 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-700"
+                >
+                  <EnvelopeIcon className="h-6 w-auto" />
+                </a>
+              </div>
               <div className="hidden sm:flex sm:space-x-8">
                 {navigation.map(({ href, name }) => (
                   <NavLink
