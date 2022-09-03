@@ -1,4 +1,9 @@
-import { EnvelopeIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+import {
+  EnvelopeIcon,
+  EyeIcon,
+  EyeSlashIcon,
+  PencilSquareIcon,
+} from '@heroicons/react/24/outline'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
@@ -18,6 +23,7 @@ import NavBar from '~/components/navbar'
 const ATOMIC_NOTE_ACTIONS = {
   CREATE: 'CREATE',
   UPDATE: 'UPDATE',
+  TOGGLE_VISIBILITY: 'TOGGLE_VISIBILITY',
 } as const
 
 export async function action({ context, request }: ActionArgs) {
@@ -63,6 +69,28 @@ export async function action({ context, request }: ActionArgs) {
     const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
     await atomicNoteService.update(atomicNoteId, { body: atomicNoteBody })
     return redirect('/')
+  }
+
+  if (action === ATOMIC_NOTE_ACTIONS.TOGGLE_VISIBILITY) {
+    const authService = await getAuthService({ context, request })
+    if (!(await authService.isAdmin()))
+      throw new Response('Unauthorized', { status: 401 })
+
+    const atomicNoteId = formData.get('atomicNoteId')
+    invariant(
+      typeof atomicNoteId === 'string',
+      'atomic note id must be a string',
+    )
+    const status = formData.get('status')
+    invariant(
+      status === 'published' || status === 'draft' || status === 'deleted',
+      'status is invalid',
+    )
+
+    const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
+    await atomicNoteService.update(atomicNoteId, { status })
+
+    return json({})
   }
 
   throw new Error('Invalid action')
@@ -272,18 +300,50 @@ export default function Index() {
                     ) : (
                       <AtomicNoteItem note={atomicNote} />
                     )}
-                    {urlSearchParams.get('atomicNoteId') !== atomicNote.id && (
-                      <Link
-                        to={`${location.pathname}?${new URLSearchParams([
-                          ['atomicNoteId', atomicNote.id],
-                          ['edit', 'true'],
-                          ...urlSearchParams.entries(),
-                        ])}`}
-                        prefetch="intent"
-                      >
-                        <PencilSquareIcon className="ml-4 h-5 w-5" />
-                      </Link>
-                    )}
+                    {isAdmin &&
+                      urlSearchParams.get('atomicNoteId') !== atomicNote.id && (
+                        <div className="flex items-center">
+                          <Link
+                            to={`${location.pathname}?${new URLSearchParams([
+                              ['atomicNoteId', atomicNote.id],
+                              ['edit', 'true'],
+                              ...urlSearchParams.entries(),
+                            ])}`}
+                            prefetch="intent"
+                          >
+                            <PencilSquareIcon className="ml-4 h-5 w-5" />
+                          </Link>
+                          <atomicNoteFetcher.Form
+                            method="post"
+                            className="ml-4 flex"
+                          >
+                            <input
+                              type="hidden"
+                              name="atomicNoteId"
+                              value={atomicNote.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="status"
+                              value={
+                                atomicNote.status === 'published'
+                                  ? 'draft'
+                                  : 'published'
+                              }
+                            />
+                            <button
+                              name="_action"
+                              value={ATOMIC_NOTE_ACTIONS.TOGGLE_VISIBILITY}
+                            >
+                              {atomicNote.status === 'published' ? (
+                                <EyeIcon className="h-5 w-5" />
+                              ) : (
+                                <EyeSlashIcon className="h-5 w-5" />
+                              )}
+                            </button>
+                          </atomicNoteFetcher.Form>
+                        </div>
+                      )}
                   </li>
                 ))}
               </ul>
