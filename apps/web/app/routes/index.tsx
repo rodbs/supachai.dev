@@ -76,7 +76,10 @@ export async function loader({ context, request }: LoaderArgs) {
   const isAdmin = await authService.isAdmin()
 
   const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
-  const atomicNotes = await atomicNoteService.getAll()
+  const atomicNotes = (await atomicNoteService.getAll()).sort(
+    (a, b) =>
+      new Date(b.dateCreated).getTime() - new Date(a.dateCreated).getTime(),
+  )
 
   return json({ atomicNotes, isAuthenticated, isAdmin })
 }
