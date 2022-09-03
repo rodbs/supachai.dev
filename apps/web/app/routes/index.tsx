@@ -408,7 +408,7 @@ export default function Index() {
                     name="atomicNoteBody"
                     id="atomic-note-body"
                     placeholder="Create note..."
-                    className="w-full border-b bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:placeholder:text-zinc-600"
+                    className="w-full border-b bg-transparent py-2 placeholder:text-zinc-400 focus:outline-none dark:border-zinc-700 dark:placeholder:text-zinc-600"
                   />
                   <button
                     name="_action"
@@ -416,7 +416,7 @@ export default function Index() {
                     disabled={isCreatingAtomicNote}
                   >
                     <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                      <kbd className="inline-flex items-center rounded border border-zinc-200 px-3 font-sans text-sm font-medium text-zinc-400">
+                      <kbd className="inline-flex items-center rounded border border-zinc-200 px-3 font-sans text-sm font-medium text-zinc-400 dark:border-zinc-700">
                         ⏎
                       </kbd>
                     </div>
