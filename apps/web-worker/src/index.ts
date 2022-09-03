@@ -68,6 +68,7 @@ function isAsset(pathname: string): boolean {
     pathname.startsWith('/assets/') ||
     pathname.startsWith('/favicon.ico') ||
     pathname.startsWith('/robots.txt') ||
-    pathname.startsWith('/browserconfig.xml')
+    pathname.startsWith('/browserconfig.xml') ||
+    pathname.startsWith('/site.webmanifest')
   )
 }
