@@ -37,6 +37,27 @@ export const links: LinksFunction = () => {
       href: '/assets/favicons/safari-pinned-tab.svg',
       color: '#000000',
     },
+    {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: '/assets/static/fonts/inter-v7-latin-regular.woff2',
+      crossOrigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: '/assets/static/fonts/inter-v7-latin-700.woff2',
+      crossOrigin: 'anonymous',
+    },
+    {
+      rel: 'preload',
+      as: 'font',
+      type: 'font/woff2',
+      href: '/assets/static/fonts/inter-v7-latin-500.woff2',
+      crossOrigin: 'anonymous',
+    },
   ]
 }
 
