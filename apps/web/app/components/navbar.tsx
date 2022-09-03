@@ -127,11 +127,11 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                     className="flex items-center text-zinc-600 hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-500"
                   >
                     {isAuthenticated ? (
-                      <ArrowLeftOnRectangleIcon className="h-6 w-6 sm:h-7 sm:w-7" />
+                      <ArrowLeftOnRectangleIcon className="h-6 w-6" />
                     ) : (
-                      <ArrowRightOnRectangleIcon className="h-6 w-6 sm:h-7 sm:w-7" />
+                      <ArrowRightOnRectangleIcon className="h-6 w-6" />
                     )}
-                    <span className="ml-1 text-sm font-medium sm:text-base">
+                    <span className="ml-1 text-sm font-medium">
                       {isAuthenticated
                         ? isLoggingInOrOut
                           ? 'Loggin out'
