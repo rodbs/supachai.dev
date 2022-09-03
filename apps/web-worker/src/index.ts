@@ -1,4 +1,4 @@
-import { createRequestHandler } from '@remix-run/cloudflare'
+import { AppLoadContext, createRequestHandler } from '@remix-run/cloudflare'
 import * as remixServerBuild from 'web'
 import { getAssets } from './utils'
 
@@ -33,7 +33,10 @@ export default {
     }
 
     try {
-      const response = await remixRequestHandler(request)
+      const loadContext: AppLoadContext = {
+        env,
+      }
+      const response = await remixRequestHandler(request, loadContext)
       return response
     } catch (error) {
       console.error(error)

@@ -1,6 +1,17 @@
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
+import type { LoaderArgs } from '@remix-run/cloudflare'
+import { json } from '@remix-run/cloudflare'
+import { useLoaderData } from '@remix-run/react'
+import { getAtomicNoteService } from '~/atomic-notes'
 import { Container } from '~/components/container'
 import NavBar from '~/components/navbar'
+
+export async function loader({ context, request }: LoaderArgs) {
+  const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
+  const atomicNotes = await atomicNoteService.getAll()
+
+  return json({ atomicNotes })
+}
 
 interface TechStack {
   name: string
@@ -47,13 +58,15 @@ const techStack: Array<TechStack> = [
 ]
 
 export default function Index() {
+  const { atomicNotes } = useLoaderData<typeof loader>()
+
   return (
     <>
       <Container>
         <header>
           <NavBar />
         </header>
-        <main className="mt-24">
+        <main className="mt-24 sm:mt-28">
           <section className="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
             <h1 className="text-2xl font-bold">Fullstack Web Developer</h1>
             <p className="mt-4">
@@ -61,7 +74,7 @@ export default function Index() {
               enhancement philosophy—this website works well without JavaScript.
             </p>
           </section>
-          <section className="mt-8">
+          <section className="mt-8 sm:mt-12">
             <a
               href="https://github.com/supachaidev"
               target="_blank"
@@ -77,7 +90,7 @@ export default function Index() {
               My GitHub Profile
             </a>
           </section>
-          <section className="mt-8">
+          <section className="mt-8 sm:mt-12">
             <h2 className="text-xl font-bold">Tech Stack</h2>
             <ul className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
               {techStack.map(({ name, iconSrc, href }) => (
@@ -104,6 +117,12 @@ export default function Index() {
             <p className="mt-8">
               I can dive into new technologies and self-learn them quickly.
             </p>
+          </section>
+          <section className="mt-8 sm:mt-12">
+            <h2 className="text-xl font-bold">Atomic Notes</h2>
+            {atomicNotes.length === 0 ? (
+              <p className="mt-4">No atomic notes</p>
+            ) : null}
           </section>
         </main>
         <footer className="mt-8 mb-16 border-t pt-4 dark:border-zinc-800">
