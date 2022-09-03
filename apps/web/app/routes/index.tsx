@@ -70,7 +70,7 @@ export default function Index() {
                     target="_blank"
                     rel="noreferrer"
                     title={name}
-                    className="flex w-fit items-center font-bold text-zinc-800 underline dark:text-zinc-500"
+                    className="flex w-fit items-center font-bold text-zinc-800 underline hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-700"
                   >
                     {iconSrc ? (
                       <img
