@@ -66,6 +66,16 @@ export const meta: MetaFunction = () => ({
   title: 'Supachai Dev',
   description: 'Fullstack Web Developer',
   viewport: 'width=device-width,initial-scale=1',
+  'theme-color-light': {
+    name: 'theme-color',
+    content: '#fafafa',
+    media: '(prefers-color-scheme: light)',
+  },
+  'theme-color-dark': {
+    name: 'theme-color',
+    content: '#18181b',
+    media: '(prefers-color-scheme: dark)',
+  },
 })
 
 export default function App() {
