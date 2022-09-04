@@ -51,7 +51,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
       key={urlSearchParams.get('nav')}
       defaultOpen={urlSearchParams.get('nav') === 'true'}
       as="nav"
-      className="fixed inset-x-0 top-0 z-50 bg-zinc-50/95 py-2 shadow-sm shadow-zinc-100 backdrop-blur-sm dark:bg-zinc-900/95 dark:shadow-zinc-800 sm:py-4"
+      className="fixed inset-x-0 top-0 z-50 bg-zinc-50/95 py-2 shadow-sm shadow-zinc-100 backdrop-blur-sm dark:bg-zinc-900/95 dark:shadow-none sm:py-4"
     >
       {({ open }) => (
         <Container>
@@ -82,8 +82,8 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                     className={({ isActive }) =>
                       classNames(
                         isActive
-                          ? 'border-zinc-500 font-bold text-zinc-900 dark:text-zinc-400'
-                          : 'border-transparent font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-500',
+                          ? 'border-zinc-500 font-bold text-zinc-900 dark:text-zinc-300'
+                          : 'border-transparent font-medium text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-600',
                         'inline-flex items-center pt-1 text-sm uppercase',
                       )
                     }
