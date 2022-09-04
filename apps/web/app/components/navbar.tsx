@@ -108,7 +108,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
               </div>
             </div>
             <div className="flex items-center sm:ml-8">
-              <div className="mr-4 sm:mr-0 sm:w-28">
+              <div className="mr-4 sm:-mr-8 sm:w-28">
                 <authFetcher.Form
                   replace
                   method="post"
