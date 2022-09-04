@@ -4,7 +4,7 @@ import {
   createRequestHandler,
 } from '@remix-run/cloudflare'
 import * as remixServerBuild from 'web'
-import { getAssets, hotLinkProtection } from './utils'
+import { addSecurityHeaders, getAssets, hotLinkProtection } from './utils'
 
 export * from './user-do'
 
@@ -54,7 +54,7 @@ export default {
         sessionStorage,
       }
       const response = await remixRequestHandler(request, loadContext)
-      return response
+      return addSecurityHeaders(response)
     } catch (error) {
       console.error(error)
       return new Response('An unexpected error occurred.', {
