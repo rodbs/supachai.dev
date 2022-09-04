@@ -414,6 +414,11 @@ export default function Index() {
                 Show {urlSearchParams.has('starred') ? 'all' : 'starred'} notes
               </Link>
             </div>
+            {!isAuthenticated && (
+              <div className="mt-4">
+                <p>Log in to star atomic notes.</p>
+              </div>
+            )}
             <atomicNoteFetcher.Form
               replace
               method="get"
