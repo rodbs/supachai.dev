@@ -23,7 +23,10 @@ interface LinkItem {
   name: string
 }
 
-const navigation: Array<LinkItem> = [{ href: '/', name: 'Home' }]
+const navigation: Array<LinkItem> = [
+  { href: '/', name: 'Home' },
+  { href: '/about', name: 'About' },
+]
 
 function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
   const [urlSearchParams] = useSearchParams()
