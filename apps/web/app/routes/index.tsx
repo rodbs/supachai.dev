@@ -593,10 +593,7 @@ export default function Index() {
                                 className="ml-4 h-5 w-5"
                               />
                             </Link>
-                            <atomicNoteFetcher.Form
-                              method="post"
-                              className="ml-4 flex"
-                            >
+                            <Form method="post" className="ml-4 flex">
                               <input
                                 type="hidden"
                                 name="atomicNoteId"
@@ -628,7 +625,7 @@ export default function Index() {
                                   />
                                 )}
                               </button>
-                            </atomicNoteFetcher.Form>
+                            </Form>
                           </div>
                         )}
                     </li>
