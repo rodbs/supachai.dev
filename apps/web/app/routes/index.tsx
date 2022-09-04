@@ -399,6 +399,7 @@ export default function Index() {
             <h2 className="text-xl font-bold">Atomic Notes</h2>
             <div className="mt-4">
               <Link
+                prefetch="intent"
                 to={urlSearchParams.has('starred') ? '' : '/?starred'}
                 className="flex items-center text-zinc-700 underline"
               >
