@@ -59,7 +59,6 @@ export async function action({ context, request }: ActionArgs) {
       id: crypto.randomUUID(),
       body: atomicNoteBody,
       dateCreated: new Date().toISOString(),
-      starredBy: [],
       status: 'draft',
     }
     return json({ atomicNote: await atomicNoteService.create(atomicNote) })
