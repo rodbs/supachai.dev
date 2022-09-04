@@ -4,7 +4,7 @@ import {
   createRequestHandler,
 } from '@remix-run/cloudflare'
 import * as remixServerBuild from 'web'
-import { getAssets } from './utils'
+import { getAssets, hotLinkProtection } from './utils'
 
 export * from './user-do'
 
@@ -34,7 +34,7 @@ export default {
     const url = new URL(request.url)
     if (isAsset(url.pathname)) {
       const response = await getAssets(request, url, env, ctx)
-      if (response) return response
+      if (response) return await hotLinkProtection(request, response)
       return new Response('Asset not found', { status: 404 })
     }
 
