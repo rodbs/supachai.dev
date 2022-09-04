@@ -573,11 +573,11 @@ export default function Index() {
                               }
                             />
                             {starredAtomicNoteIds.includes(atomicNote.id) ? (
-                              <button>
+                              <button aria-label="unstar note">
                                 <StarIconSolid className="h-5 w-5 text-zinc-400 dark:text-zinc-700" />
                               </button>
                             ) : (
-                              <button>
+                              <button aria-label="star note">
                                 <StarIcon className="h-5 w-5 text-zinc-400 dark:text-zinc-700" />
                               </button>
                             )}
@@ -595,6 +595,7 @@ export default function Index() {
                                 ...urlSearchParams.entries(),
                               ])}#${atomicNote.id}`}
                               prefetch="intent"
+                              aria-label="edit note"
                             >
                               <PencilSquareIcon
                                 aria-label="Pencil Square Icon"

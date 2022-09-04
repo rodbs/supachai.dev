@@ -66,6 +66,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                   </span>
                 </Link>
                 <a
+                  aria-label="Send an email to me"
                   href="mailto:contact@supachai.dev"
                   className="ml-4 flex w-fit text-zinc-700 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-700"
                 >
