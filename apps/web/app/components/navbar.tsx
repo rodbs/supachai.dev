@@ -44,7 +44,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
   const redirect = Array.from(urlSearchParams.keys()).length
     ? `${location.pathname}?${urlSearchParams}`
     : location.pathname
-  const isLoggingInOrOut = useSpinDelay(Boolean(authFetcher.submission))
+  const isLoggingInOrOut = useSpinDelay(authFetcher.state === 'submitting')
 
   return (
     <Disclosure
@@ -114,7 +114,7 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
             <div className="flex items-center sm:ml-8">
               <div className="mr-4 sm:-mr-8 sm:w-28">
                 <authFetcher.Form
-                  replace
+                  reloadDocument={isAuthenticated}
                   method="post"
                   action={
                     isAuthenticated
