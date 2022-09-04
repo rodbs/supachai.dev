@@ -400,7 +400,11 @@ export default function Index() {
             <div className="mt-4">
               <Link
                 prefetch="intent"
-                to={urlSearchParams.has('starred') ? '' : '/?starred'}
+                to={
+                  urlSearchParams.has('starred')
+                    ? '/#atomic-note-list'
+                    : '/?starred#atomic-note-list'
+                }
                 className="flex items-center text-zinc-700 underline"
               >
                 {urlSearchParams.has('starred') ? (
