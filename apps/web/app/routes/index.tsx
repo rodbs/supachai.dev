@@ -20,6 +20,7 @@ import {
   useSearchParams,
   useTransition,
 } from '@remix-run/react'
+import type { FunctionComponent } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
 import type { AtomicNote } from '~/atomic-notes'
@@ -27,6 +28,16 @@ import { getAtomicNoteService } from '~/atomic-notes'
 import { getAuthService } from '~/auth'
 import { Container } from '~/components/container'
 import NavBar from '~/components/navbar'
+import {
+  CloudflareWorkers,
+  FirebaseIcon,
+  GitHubIcon,
+  NextDotJSIcon,
+  ReactIcon,
+  RemixIcon,
+  TailwindCSSIcon,
+  TypeScriptIcon,
+} from '~/components/tech-icons'
 import { getUserService } from '~/user'
 
 const ATOMIC_NOTES_PER_PAGE = 3
@@ -216,45 +227,45 @@ export async function loader({ context, request }: LoaderArgs) {
 
 interface TechStack {
   name: string
-  iconSrc?: string
   href?: string
+  IconComponent?: FunctionComponent<{ classNames: string }>
 }
 
 const techStack: Array<TechStack> = [
   {
     name: 'TypeScript',
-    iconSrc: '/assets/static/icons/typescript.svg',
     href: 'https://www.typescriptlang.org',
+    IconComponent: TypeScriptIcon,
   },
   {
     name: 'React',
-    iconSrc: '/assets/static/icons/react.svg',
     href: 'https://reactjs.org',
+    IconComponent: ReactIcon,
   },
   {
     name: 'Tailwind CSS',
-    iconSrc: '/assets/static/icons/tailwindcss.svg',
     href: 'https://tailwindcss.com',
+    IconComponent: TailwindCSSIcon,
   },
   {
     name: 'Remix',
-    iconSrc: '/assets/static/icons/remix.svg',
     href: 'https://remix.run',
+    IconComponent: RemixIcon,
   },
   {
     name: 'Next.js',
-    iconSrc: '/assets/static/icons/nextdotjs.svg',
     href: 'https://nextjs.org',
+    IconComponent: NextDotJSIcon,
   },
   {
     name: 'Firebase',
-    iconSrc: '/assets/static/icons/firebase.svg',
     href: 'https://firebase.google.com',
+    IconComponent: FirebaseIcon,
   },
   {
     name: 'Cloudflare Workers',
-    iconSrc: '/assets/static/icons/cloudflare-workers.svg',
     href: 'https://workers.cloudflare.com',
+    IconComponent: CloudflareWorkers,
   },
 ]
 
@@ -344,7 +355,9 @@ export default function Index() {
         </header>
         <main className="mt-24 sm:mt-28">
           <section className="rounded-lg bg-zinc-100 p-4 dark:bg-zinc-800">
-            <h1 className="text-2xl font-bold">Fullstack Web Developer</h1>
+            <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-200">
+              Fullstack Web Developer
+            </h1>
             <p className="mt-4">
               I build web applications with great UX using progressive
               enhancement philosophy—this website works well without JavaScript.
@@ -356,34 +369,28 @@ export default function Index() {
               target="_blank"
               rel="noreferrer"
               title="My GitHub profile"
-              className="inline-flex items-center rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-zinc-700 shadow-sm hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 dark:border-zinc-700 dark:bg-transparent dark:text-zinc-400 dark:hover:border-zinc-500 dark:hover:bg-transparent dark:focus:ring-offset-0"
+              className="inline-flex items-center rounded-md border border-zinc-300 bg-white px-3 py-2 text-sm font-medium leading-4 text-zinc-800 shadow-sm hover:bg-zinc-50 focus:outline-none focus:ring-2 focus:ring-zinc-500 focus:ring-offset-2 dark:border-zinc-600 dark:bg-transparent dark:text-zinc-300 dark:hover:border-zinc-500 dark:hover:bg-transparent dark:focus:ring-offset-0"
             >
-              <img
-                className="mr-2 h-5 w-5"
-                src="/assets/static/icons/github.svg"
-                alt="GitHub Icon"
-              />
+              <GitHubIcon classNames="w-5 h-5 mr-2" />
               My GitHub Profile
             </a>
           </section>
           <section className="mt-8 sm:mt-12">
-            <h2 className="text-xl font-bold">Tech Stack</h2>
+            <h2 className="text-xl font-bold text-zinc-900 dark:text-zinc-200">
+              Tech Stack
+            </h2>
             <ul className="mt-6 space-y-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:space-y-0">
-              {techStack.map(({ name, iconSrc, href }) => (
+              {techStack.map(({ name, IconComponent, href }) => (
                 <li key={name}>
                   <a
                     href={href ? href : '#'}
                     target="_blank"
                     rel="noreferrer"
                     title={name}
-                    className="flex w-fit items-center font-medium text-zinc-800 underline hover:text-zinc-600 dark:text-zinc-500 dark:hover:text-zinc-700"
+                    className="flex w-fit items-center font-medium underline hover:text-zinc-600 dark:hover:text-zinc-500"
                   >
-                    {iconSrc ? (
-                      <img
-                        className="mr-2 h-5 w-5 opacity-40 dark:text-zinc-400"
-                        src={iconSrc}
-                        alt={name}
-                      />
+                    {IconComponent ? (
+                      <IconComponent classNames="h-5 w-5 mr-2" />
                     ) : null}
                     {name}
                   </a>
@@ -404,7 +411,7 @@ export default function Index() {
                     ? '/#atomic-note-list'
                     : '/?starred#atomic-note-list'
                 }
-                className="flex items-center text-zinc-700 underline"
+                className="flex items-center text-zinc-700 underline hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-600"
               >
                 {urlSearchParams.has('starred') ? (
                   <StarIconSolid className="mr-2 inline-block h-5 w-5" />
@@ -450,7 +457,7 @@ export default function Index() {
                   />
                 </div>
                 <div className="ml-2 flex">
-                  <button className="inline-flex items-center rounded border border-zinc-200 px-3 py-1 font-sans text-sm font-medium text-zinc-500 dark:border-zinc-700">
+                  <button className="inline-flex items-center rounded border border-zinc-300 px-3 py-1 font-sans text-sm font-medium text-zinc-500 dark:border-zinc-600 dark:text-zinc-400">
                     Search
                   </button>
                 </div>
@@ -481,7 +488,7 @@ export default function Index() {
                     disabled={isCreatingAtomicNote}
                   >
                     <div className="absolute inset-y-0 right-0 flex py-1.5 pr-1.5">
-                      <kbd className="inline-flex items-center rounded border border-zinc-200 px-3 font-sans text-sm font-medium text-zinc-400 dark:border-zinc-700">
+                      <kbd className="inline-flex items-center rounded border border-zinc-300 px-3 font-sans text-sm font-medium text-zinc-500 dark:border-zinc-600 dark:text-zinc-400">
                         ⏎
                       </kbd>
                     </div>
@@ -650,7 +657,7 @@ export default function Index() {
                       ...urlSearchParams.entries(),
                       ['atomicNoteSearchQuery', atomicNoteSearchQuery],
                     ])}#${atomicNotes[atomicNotes.length - 1].id}`}
-                    className="mt-4 flex w-fit underline"
+                    className="mt-4 flex w-fit underline hover:text-zinc-600 dark:hover:text-zinc-500"
                   >
                     load more
                   </Link>
@@ -662,7 +669,7 @@ export default function Index() {
         <footer className="mt-8 mb-16 border-t pt-4 dark:border-zinc-800">
           <a
             href="mailto:contact@supachai.dev"
-            className="flex w-fit items-center font-medium text-zinc-700 underline hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-700"
+            className="flex w-fit items-center font-medium text-zinc-700 underline hover:text-zinc-500 dark:text-zinc-400 dark:hover:text-zinc-600"
           >
             <EnvelopeIcon className="mr-2 h-6 w-6" />
             Send an email to me

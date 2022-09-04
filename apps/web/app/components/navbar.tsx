@@ -60,15 +60,15 @@ function NavBar({ isAuthenticated }: { isAuthenticated: boolean }) {
                   prefetch="intent"
                   className="-ml-2 flex h-fit w-fit items-center"
                 >
-                  <Logo classNames="w-8 dark:text-zinc-400" />
-                  <span className="font-bold dark:text-zinc-400 sm:text-lg">
+                  <Logo classNames="w-8 dark:text-zinc-200 text-zinc-900" />
+                  <span className="font-bold text-zinc-900 dark:text-zinc-200 sm:text-lg">
                     Supachai.dev
                   </span>
                 </Link>
                 <a
                   aria-label="Send an email to me"
                   href="mailto:contact@supachai.dev"
-                  className="ml-4 flex w-fit text-zinc-700 hover:text-zinc-500 dark:text-zinc-600 dark:hover:text-zinc-700"
+                  className="ml-4 flex w-fit text-zinc-800 hover:text-zinc-600 dark:text-zinc-300 dark:hover:text-zinc-500"
                 >
                   <EnvelopeIcon className="h-6 w-auto" />
                 </a>
