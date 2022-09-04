@@ -450,7 +450,7 @@ export default function Index() {
                   />
                 </div>
                 <div className="ml-2 flex">
-                  <button className="inline-flex items-center rounded border border-zinc-200 px-3 py-1 font-sans text-sm font-medium text-zinc-400 dark:border-zinc-700">
+                  <button className="inline-flex items-center rounded border border-zinc-200 px-3 py-1 font-sans text-sm font-medium text-zinc-500 dark:border-zinc-700">
                     Search
                   </button>
                 </div>
