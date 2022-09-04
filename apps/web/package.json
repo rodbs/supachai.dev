@@ -9,7 +9,8 @@
     "build:css": "tailwindcss -m -i ./styles/tailwind.css -o app/styles/tailwind.css",
     "dev": "concurrently \"npm run dev:css\" \"remix watch\"",
     "dev:css": "tailwindcss -w -i ./styles/tailwind.css -o app/styles/tailwind.css",
-    "format": "prettier --write '**/*.{ts,tsx,js,jsx}'"
+    "format": "prettier --write '**/*.{ts,tsx,js,jsx}'",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@formkit/auto-animate": "1.0.0-beta.3",
@@ -34,6 +35,7 @@
     "cloudflare-env": "workspace:*",
     "concurrently": "^7.3.0",
     "eslint": "^8.20.0",
+    "tsconfig": "workspace:^0.0.0",
     "typescript": "^4.7.4"
   },
   "engines": {
