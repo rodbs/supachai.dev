@@ -8,3 +8,10 @@ kv_namespaces = [
 
 [site]
 bucket = '../web/public'
+
+[durable_objects]
+bindings = [{ name = 'DO_USER', class_name = 'UserDurableObject' }]
+
+[[migrations]]
+tag = "v1"
+new_classes = ["UserDurableObject"]

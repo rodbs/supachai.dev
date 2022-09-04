@@ -5,10 +5,13 @@ import {
   EyeSlashIcon,
   MagnifyingGlassIcon,
   PencilSquareIcon,
+  StarIcon,
 } from '@heroicons/react/24/outline'
+import { StarIcon as StarIconSolid } from '@heroicons/react/24/solid'
 import type { ActionArgs, LoaderArgs } from '@remix-run/cloudflare'
 import { json, redirect } from '@remix-run/cloudflare'
 import {
+  Form,
   Link,
   useFetcher,
   useLoaderData,
@@ -24,6 +27,7 @@ import { getAtomicNoteService } from '~/atomic-notes'
 import { getAuthService } from '~/auth'
 import { Container } from '~/components/container'
 import NavBar from '~/components/navbar'
+import { getUserService } from '~/user'
 
 const ATOMIC_NOTES_PER_PAGE = 3
 const LOAD_MORE_COUNT = 3
@@ -33,6 +37,7 @@ const ATOMIC_NOTE_ACTIONS = {
   UPDATE: 'UPDATE',
   TOGGLE_VISIBILITY: 'TOGGLE_VISIBILITY',
   SEARCH: 'SEARCH',
+  TOGGLE_STAR: 'TOGGLE_STAR',
 } as const
 
 export async function action({ context, request }: ActionArgs) {
@@ -117,14 +122,37 @@ export async function action({ context, request }: ActionArgs) {
     return json({})
   }
 
+  if (action === ATOMIC_NOTE_ACTIONS.TOGGLE_STAR) {
+    const authService = await getAuthService({ context, request })
+    const user = await authService.authenticator.isAuthenticated(request)
+    if (!user) throw new Response('Unauthorized', { status: 401 })
+
+    const atomicNoteId = formData.get('atomicNoteId')
+    invariant(
+      typeof atomicNoteId === 'string',
+      'atomic note id must be a string',
+    )
+    const value = formData.get('value')
+    invariant(typeof value === 'string', 'value must be a string')
+
+    const userService = getUserService({
+      userId: user.id,
+      userDo: context.env.DO_USER,
+    })
+
+    if (value === '1') await userService.starAtomicNote(atomicNoteId)
+    else await userService.unstarAtomicNote(atomicNoteId)
+
+    return json({})
+  }
+
   throw new Error('Invalid action')
 }
 
 export async function loader({ context, request }: LoaderArgs) {
   const authService = await getAuthService({ context, request })
-  const isAuthenticated = Boolean(
-    await authService.authenticator.isAuthenticated(request),
-  )
+  const user = await authService.authenticator.isAuthenticated(request)
+  const isAuthenticated = Boolean(user)
   const isAdmin = await authService.isAdmin()
 
   const url = new URL(request.url)
@@ -140,9 +168,22 @@ export async function loader({ context, request }: LoaderArgs) {
     typeof atomicNoteOffsetMaybeInt === 'number' ? atomicNoteOffsetMaybeInt : 0
 
   const atomicNoteService = getAtomicNoteService(context.env.KV_ATOMIC_NOTES)
+  const userService = user
+    ? getUserService({ userId: user?.id, userDo: context.env.DO_USER })
+    : null
+  const starredAtomicNoteIds =
+    (await userService?.getStarredAtomicNoteIds()) ?? []
+
   const atomicNotes = (await atomicNoteService.getAll())
     .filter(atomicNote => {
       if (atomicNote.status === 'draft') return isAdmin
+      return true
+    })
+    .filter(atomicNote => {
+      if (url.searchParams.has('starred')) {
+        if (!user) return false
+        return starredAtomicNoteIds.includes(atomicNote.id)
+      }
       return true
     })
     .filter(atomicNote => {
@@ -168,6 +209,7 @@ export async function loader({ context, request }: LoaderArgs) {
     isAuthenticated,
     isAdmin,
     atomicNoteSearchQuery: url.searchParams.get('atomicNoteSearchQuery') ?? '',
+    starredAtomicNoteIds,
   }
 
   return json(data)
@@ -220,6 +262,7 @@ const techStack: Array<TechStack> = [
 export default function Index() {
   const {
     atomicNotes: _atomicNotes,
+    starredAtomicNoteIds,
     hasMoreAtomicNotes: _hasMoreAtomicNotes,
     isAuthenticated,
     isAdmin,
@@ -354,6 +397,19 @@ export default function Index() {
           </section>
           <section className="mt-8 sm:mt-12">
             <h2 className="text-xl font-bold">Atomic Notes</h2>
+            <div className="mt-4">
+              <Link
+                to={urlSearchParams.has('starred') ? '' : '/?starred'}
+                className="flex items-center text-zinc-700 underline"
+              >
+                {urlSearchParams.has('starred') ? (
+                  <StarIconSolid className="mr-2 inline-block h-5 w-5" />
+                ) : (
+                  <StarIcon className="mr-2 inline-block h-5 w-5" />
+                )}
+                Show {urlSearchParams.has('starred') ? 'all' : 'starred'} notes
+              </Link>
+            </div>
             <atomicNoteFetcher.Form
               replace
               method="get"
@@ -426,7 +482,11 @@ export default function Index() {
             )}
             {atomicNotes?.length === 0 ? (
               <p id="no-atomic-notes-prompt" className="mt-4">
-                No published atomic notes
+                {!isAuthenticated
+                  ? 'Log in to see your starred atomic notes'
+                  : urlSearchParams.has('starred')
+                  ? 'No starred atomic notes'
+                  : 'No published atomic notes'}
               </p>
             ) : (
               <div>
@@ -479,6 +539,41 @@ export default function Index() {
                         </atomicNoteFetcher.Form>
                       ) : (
                         <AtomicNoteItem note={atomicNote} />
+                      )}
+
+                      {isAuthenticated && (
+                        <div className="ml-4">
+                          <Form method="post" className="flex items-center">
+                            <input
+                              type="hidden"
+                              name="_action"
+                              value={ATOMIC_NOTE_ACTIONS.TOGGLE_STAR}
+                            />
+                            <input
+                              type="hidden"
+                              name="atomicNoteId"
+                              value={atomicNote.id}
+                            />
+                            <input
+                              type="hidden"
+                              name="value"
+                              value={
+                                starredAtomicNoteIds.includes(atomicNote.id)
+                                  ? 0
+                                  : 1
+                              }
+                            />
+                            {starredAtomicNoteIds.includes(atomicNote.id) ? (
+                              <button>
+                                <StarIconSolid className="h-5 w-5 text-zinc-400 dark:text-zinc-700" />
+                              </button>
+                            ) : (
+                              <button>
+                                <StarIcon className="h-5 w-5 text-zinc-400 dark:text-zinc-700" />
+                              </button>
+                            )}
+                          </Form>
+                        </div>
                       )}
                       {isAdmin &&
                         urlSearchParams.get('atomicNoteId') !==

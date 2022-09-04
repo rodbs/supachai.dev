@@ -1,6 +1,9 @@
 interface Env {
   __STATIC_CONTENT: KVNamespace
   KV_ATOMIC_NOTES: KVNamespace
+
+  DO_USER: DurableObjectNamespace
+
   SESSION_SECRETS: string
   GITHUB_CLIENT_ID: string
   GITHUB_CLIENT_SECRET: string

@@ -6,6 +6,8 @@ import {
 import * as remixServerBuild from 'web'
 import { getAssets } from './utils'
 
+export * from './user-do'
+
 const assetPath = remixServerBuild.assets.url.split('/').slice(0, -1).join('/')
 const remixRequestHandler = createRequestHandler(
   {
