@@ -405,6 +405,7 @@ export default function Index() {
             <h2 className="text-xl font-bold">Atomic Notes</h2>
             <div className="mt-4">
               <Link
+                reloadDocument={urlSearchParams.has('starred')}
                 prefetch="intent"
                 to={
                   urlSearchParams.has('starred')
