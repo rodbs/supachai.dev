@@ -516,7 +516,7 @@ export default function Index() {
                     >
                       {urlSearchParams.get('edit') === 'true' &&
                       urlSearchParams.get('atomicNoteId') === atomicNote.id ? (
-                        <atomicNoteFetcher.Form method="post" replace>
+                        <Form method="post">
                           <input
                             type="hidden"
                             name="atomicNoteId"
@@ -553,7 +553,7 @@ export default function Index() {
                           >
                             cancel
                           </Link>
-                        </atomicNoteFetcher.Form>
+                        </Form>
                       ) : (
                         <AtomicNoteItem note={atomicNote} />
                       )}
