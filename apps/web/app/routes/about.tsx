@@ -40,7 +40,7 @@ export default function AboutRoute() {
             atomic notes.
             <br />
             It is stored in the user's{' '}
-            <strong>Cloudflare Workers Durable Object</strong> which is secured.
+            <strong>Cloudflare Workers Durable Object</strong> which is secure.
           </p>
         </main>
         <Footer />
